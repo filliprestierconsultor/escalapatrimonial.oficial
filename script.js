@@ -1,0 +1,13 @@
+
+/* CONFIGURAÇÃO: substitua os placeholders {{...}} antes de publicar. */
+const CHECKOUT='https://pay.kiwify.com.br/ViZztps', PIXEL_ID='{{PIXEL_ID}}';
+/* Meta Pixel: só inicializa quando o ID real for configurado. */
+if(PIXEL_ID && !PIXEL_ID.includes('{{')){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init',PIXEL_ID);fbq('track','PageView');fbq('track','ViewContent',{content_name:'Escala Patrimonial',content_type:'product',value:97,currency:'BRL'});}
+function track(name,params){if(typeof fbq==='function')fbq('trackCustom',name,params||{});}
+function checkoutUrl(){if(CHECKOUT.includes('{{'))return null;try{const u=new URL(CHECKOUT,location.href),p=new URLSearchParams(location.search);['utm_source','utm_medium','utm_campaign','utm_content'].forEach(k=>{if(p.has(k))u.searchParams.set(k,p.get(k))});return u.toString()}catch(e){return null}}
+document.querySelectorAll('.buy').forEach(a=>a.addEventListener('click',e=>{const url=checkoutUrl();if(!url){e.preventDefault();alert('Configure o link do checkout Kiwify antes de publicar.');return}a.href=url;if(typeof fbq==='function')fbq('track','InitiateCheckout',{value:97,currency:'BRL',content_name:'Escala Patrimonial'});}));
+/* O evento Purchase deve ser configurado na Kiwify, não nesta página. */
+const revealObserver='IntersectionObserver'in window?new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.07}):null;document.querySelectorAll('.reveal').forEach(el=>revealObserver?revealObserver.observe(el):el.classList.add('visible'));
+const sticky=document.getElementById('stickyBuy');const hero=document.querySelector('.hero');if('IntersectionObserver'in window){new IntersectionObserver(entries=>{sticky.classList.toggle('show',!entries[0].isIntersecting)},{threshold:0}).observe(hero)}
+const milestones=new Set();addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;if(max<=0)return;const ratio=scrollY/max;[50,90].forEach(n=>{if(ratio>=n/100&&!milestones.has(n)){milestones.add(n);track('ScrollDepth',{percent:n})}})},{passive:true});
+/* Google Analytics 4 (opcional): configure {{GA4_ID}} e habilite o gtag.js seguindo as instruções do Google. */
